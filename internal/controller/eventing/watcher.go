@@ -45,7 +45,7 @@ type NatsWatcher struct {
 }
 
 func (w *NatsWatcher) Start() {
-	if !w.started {
+	if w.started {
 		return
 	}
 
@@ -87,6 +87,8 @@ func (w *NatsWatcher) Stop() {
 
 	w.stopCh <- struct{}{}
 	close(w.stopCh)
+	// stop the informers
+	w.dynamicInformerFactory.Shutdown()
 
 	w.started = false
 }
