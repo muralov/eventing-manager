@@ -77,21 +77,20 @@ Use the following sample CRs as guidance. Each can be applied immediately when y
 
 <!-- TABLE-END -->
 
-<h3>More Details About Eventing CR State</h3>
+## Impact of the Backend to the Eventing CR State and Event Flow
 The following table provides more details on the overall state of the Eventing CR: 
-
-- The <b>Backend Config</b> column is part of the eventing CR that is either available or mistakenly not specified by a user.
 - The <b>Backend State</b> column describes the state of the NATS backend or EventMesh Secret existence.
-- The <b>Eventing State</b> column has the overall state of the Eventing CR.
+- The <b>Backend Config</b> describes whether the Eventing CR that has been specified by a user or is not available.
+- The <b>Eventing State</b> describes the overall state of the Eventing CR.
 
 Warnings indicate that user action is required, that is, the user must install the NATS module or create an EventMesh Secret.
 
-| Backend Config | Backend State         | Backend Type | Eventing State | Impact on event flow |
-|---------------------------|---------------------------|----------------|----------------|----------|
-| exists            | Warning (NATS deletion blocked)                         | NATS | Ready | events will be accepted / dispatched |
-| exists                        | Processing (mainly happens during initialization and backend switching)      | NATS/EventMesh | Processing | no events will be accepted / dispatched |
-| exists                        | Error (NATS ist unavailable or cannot be connected) | NATS | Warning | no events will be accepted / dispatched |
-| missing            |                           | NATS/EventMesh | Warning | no events will be accepted / dispatched |
-| exists                        | Missing | NATS | Warning | no events will be accepted / dispatched |
-| exists                        | Error (secret for EventMesh missing)      | EventMesh | Warning | no events will be accepted / dispatched |
-| exists                    | Error (cases not caused by a user, e.g. cannot create EPP deployment or cannot start subscription manager although backend is available)      | NATS/EventMesh | Error | no events will be accepted / dispatched |
+| Backend Type   | Backend Config | Backend State                                                                                                                               | Eventing State | Impact on Event Flow                     |
+|----------------|----------------|---------------------------------------------------------------------------------------------------------------------------------------------|----------------|------------------------------------------|
+| NATS/EventMesh | missing        | n/a                                                                                                                                         | Warning        | No events will be accepted or dispatched |
+| NATS/EventMesh | exists         | Processing (mainly happens during initialization and backend switching)                                                                     | Processing     | No events will be accepted or dispatched |
+| NATS           | exists         | Warning (NATS deletion blocked)                                                                                                             | Ready          | Events will be accepted or dispatched    |
+| NATS           | exists         | Error (NATS ist unavailable or cannot be connected)                                                                                         | Warning        | No events will be accepted or dispatched |
+| NATS           | exists         | Missing                                                                                                                                     | Warning        | No events will be accepted or dispatched |
+| EventMesh      | exists         | Error (secret for EventMesh missing)                                                                                                        | Warning        | No events will be accepted or dispatched |
+| NATS/EventMesh | exists         | Error (cases not caused by a user, such as cannot create EPP deployment or cannot start subscription manager although backend is available) | Error          | No events will be accepted or dispatched |
